@@ -1,2 +1,2 @@
-# web3demo
- Dapp
+# Lottery Dapp
+ 
