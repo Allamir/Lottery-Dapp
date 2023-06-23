@@ -77,6 +77,13 @@ const abi = [
 	},
 	{
 		"inputs": [],
+		"name": "destroy",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getOwner",
 		"outputs": [
 			{
@@ -142,6 +149,19 @@ const abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "new_owner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
@@ -167,7 +187,7 @@ const abi = [
 	}
 ];
 
-const address = "0x18736E76D22dD7E0431C4f3C656e16569087Ae65";
+const address = "0x467C31639B61188c903131F48137e45c919d7ff0";
 
 var account = null;
 
@@ -208,6 +228,52 @@ async function bid(item_id) {
     
   }
 
+}
+
+async function isOwner() {
+
+	if (window.ethereum) {
+		console.log(account.toLowerCase());
+		console.log(owner.toLowerCase());
+		if(account.toLowerCase() == owner.toLowerCase() ) {
+
+			return true;
+
+		}
+
+		else {
+			return false;
+		}
+	}
+}
+
+async function withdraw() {
+
+	if(window.ethereum) {
+
+
+		var boll = false;
+
+		boll = isOwner();
+		//need to make a frond end check for addmin
+		if(boll){
+
+			await contract.methods.withdraw().send({from:account});
+
+		}
+
+		else{
+			console.log("you are not the contract owner");
+		}
+	}
+}
+
+async function declareWinner() {
+
+	if(window.ethereum) {
+
+		await contract.methods.revealWinners().send({from:account});
+	}
 }
 
 function App() {
@@ -265,11 +331,11 @@ function App() {
           </div>
           <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
             
-            <Button onClick={ () => bid(2)}>Withdraw</Button>
+            <Button onClick={ () => withdraw() }>Withdraw</Button>
           </div>
 		  <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
             
-            <Button onClick={ () => bid(2)}>Declear Winner</Button>
+            <Button onClick={ () => declareWinner()}>Declear Winner</Button>
           </div>
         </div>
       </div>
