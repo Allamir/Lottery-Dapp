@@ -308,6 +308,13 @@ async function destroy() {
 	}
 }
 
+async function amiWinner() {
+
+	if(window.ethereum) {
+		
+	}
+}
+
 async function transferOwner() {
 
 	if(window.ethereum) {
@@ -317,7 +324,8 @@ async function transferOwner() {
 			var newOwner = document.getElementById('newOwner').value;
 
 			await contract.methods.transferOwnership(newOwner).send({from:account});
-
+			
+			owner = await contract.methods.getOwner().call();
 		}
 		else{
 			console.log("you are not the contract owner");
