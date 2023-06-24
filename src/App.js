@@ -501,20 +501,27 @@ function App() {
           
         </div>
 
+		
         <div className='row' style={{marginTop:"40px"}}>
           <h2 style={{marginBottom:"40px"}}>Available items to bid in currect lottery</h2>
-          <div class='gradient col-sm-4' style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
+          <div class='gradient col-sm-4'  style={{borderRadius:"20%",boxShadow:"1px 1px 10px #000000"}}>
             <h2 style={{color:'#FFFFFF'}}>1 : Car</h2>
-            <Button onClick={ () => bid(0)}>Bid</Button>
+			<img src="https://images.cars.com/in/v2/stock_photos/7f212472-c429-4681-882b-29e52f4d52b5/884b28bd-d67f-4c90-a7e5-a066090db8f7.png?w=1000" alt="react logo" style={{ width: '50%', }}/>
+            <br></br>
+			<Button onClick={ () => bid(0)}>Bid</Button>
 			<h5 id="0" style={{color:'#FFFFFF'}}></h5>
           </div>
-          <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}} >
+          <div class='gradient col-sm-4'style={{borderRadius:"20%",boxShadow:"1px 1px 10px #000000"}} >
             <h2 style={{color:'#FFFFFF'}}>2 : Phone</h2>
-            <Button onClick={ () => bid(1)}>Bid</Button>
+			<img src="https://www.freeiconspng.com/thumbs/iphone-x-pictures/apple-iphone-x-pictures-5.png" alt="react logo" style={{ width: '30%', }}/>
+            <br></br>
+			<Button onClick={ () => bid(1)}>Bid</Button>
 			<h5 id="1" style={{color:'#FFFFFF'}}></h5>
           </div>
-          <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
+          <div class='gradient col-sm-4'style={{borderRadius:"20%",boxShadow:"1px 1px 10px #000000"}}>
             <h2 style={{color:'#FFFFFF'}}>3 : Helicopter</h2>
+			<img src="https://static.vecteezy.com/system/resources/previews/019/145/655/original/helicopter-isolated-on-transparent-background-3d-rendering-illustration-free-png.png" alt="react logo" style={{ width: '50%' }}/>
+			<br></br>
             <Button onClick={ () => bid(2)}>Bid</Button>
 			<h5 id="2" style={{color:'#FFFFFF'}}></h5>
           </div>
@@ -566,7 +573,7 @@ function App() {
             
             <Button onClick={ () => destroy()}>Destroy Contract</Button>
           </div>
-		  <div class='gradient col-sm-4' id='wallet-owner-address'>
+		  <div class='gradient col-sm-4' id='wallet-owner-address' style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000",marginBottom:"2%",marginRight:"1%"}}>
               
 			<label for='floatingInput' style={{color:'#FFFFFF'}}>Give address to transfer ownership</label>
             
