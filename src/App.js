@@ -232,36 +232,31 @@ async function bid(item_id) {
 
 async function isOwner() {
 
-	if (window.ethereum) {
-		console.log(account.toLowerCase());
-		console.log(owner.toLowerCase());
-		if(account.toLowerCase() == owner.toLowerCase() ) {
+	
+		var new_acc = account.substr(2);
+		var new_owner = owner.substr(2);
+		console.log(new_acc);
+		console.log(new_owner);
+		if(new_acc === new_owner ) {
 
 			return true;
 
 		}
-
 		else {
 			return false;
 		}
-	}
+	
 }
 
 async function withdraw() {
 
 	if(window.ethereum) {
 
-
-		var boll = false;
-
-		boll = isOwner();
-		//need to make a frond end check for addmin
-		if(boll){
+		if( await isOwner()){
 
 			await contract.methods.withdraw().send({from:account});
 
 		}
-
 		else{
 			console.log("you are not the contract owner");
 		}
@@ -271,8 +266,62 @@ async function withdraw() {
 async function declareWinner() {
 
 	if(window.ethereum) {
+		
+		if( await isOwner()){
 
-		await contract.methods.revealWinners().send({from:account});
+			await contract.methods.revealWinners().send({from:account});
+
+		}
+		else{
+			console.log("you are not the contract owner");
+		}
+	}
+}
+
+async function reset() {
+
+	if(window.ethereum) {		
+
+		if( await isOwner()){
+
+			await contract.methods.reset().send({from:account});
+
+		}
+		else{
+			console.log("you are not the contract owner");
+		}
+	}
+}
+
+async function destroy() {
+
+	if(window.ethereum) {
+
+		if( await isOwner()){
+
+			await contract.methods.destroy().send({from:account});
+
+		}
+		else{
+			console.log("you are not the contract owner");
+		}
+	}
+}
+
+async function transferOwner() {
+
+	if(window.ethereum) {
+
+		if( await isOwner()){
+
+			var newOwner = document.getElementById('newOwner').value;
+
+			await contract.methods.transferOwnership(newOwner).send({from:account});
+
+		}
+		else{
+			console.log("you are not the contract owner");
+		}
 	}
 }
 
@@ -329,6 +378,12 @@ function App() {
             
             <Button onClick={ () => bid(1)}>Am I Winner</Button>
           </div>
+          
+        </div>
+
+		<div className='row' style={{marginTop:"40px"}}>
+          <h2 style={{marginBottom:"40px"}}>Admin Panel</h2>
+          
           <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
             
             <Button onClick={ () => withdraw() }>Withdraw</Button>
@@ -337,6 +392,21 @@ function App() {
             
             <Button onClick={ () => declareWinner()}>Declear Winner</Button>
           </div>
+		  <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
+            
+            <Button onClick={ () => reset()}>reset</Button>
+          </div>
+		  <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
+            
+            <Button onClick={ () => destroy()}>Destroy Contract</Button>
+          </div>
+		  <div class='gradient col-sm-4' id='wallet-owner-address'>
+              
+			<label for='floatingInput' style={{color:'#FFFFFF'}}>Give address to transfer ownership</label>
+            
+			<input type = "text" id="newOwner" name="newOwner"></input>
+			<Button onClick={ () => transferOwner()}>Transfer</Button>
+			</div>
         </div>
       </div>
     </div>
