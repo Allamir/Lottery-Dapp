@@ -7,6 +7,49 @@ import Web3 from 'web3';
 const abi = [
 	{
 		"inputs": [],
+		"stateMutability": "payable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_player",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_itemNumber",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "lotteryNumber",
+				"type": "uint256"
+			}
+		],
+		"name": "winnerDecleration",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "Owner",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "add_item",
 		"outputs": [],
 		"stateMutability": "payable",
@@ -40,67 +83,22 @@ const abi = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "reset",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "revealWinners",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "new_owner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"stateMutability": "payable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_player",
-				"type": "address"
-			},
-			{
-				"indexed": false,
 				"internalType": "uint256",
-				"name": "_itemNumber",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "lotteryNumber",
+				"name": "items_id",
 				"type": "uint256"
 			}
 		],
-		"name": "winnerDecleration",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "getItemBiddings",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -135,6 +133,11 @@ const abi = [
 				"internalType": "address",
 				"name": "winner",
 				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "total_biddings",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -142,15 +145,16 @@ const abi = [
 	},
 	{
 		"inputs": [],
-		"name": "Owner",
-		"outputs": [
-			{
-				"internalType": "address payable",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
+		"name": "reset",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "revealWinners",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -188,6 +192,19 @@ const abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "new_owner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
@@ -203,10 +220,17 @@ const abi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ];
 
-const address = "0xACDaB0623Ea6435Cc059bC0FA46578cb40699cCc";
+const address = "0x500F7A30fEA957bb4Cf353a1ED3CB4067718C8ac";
 
 var account = null;
 
@@ -388,6 +412,7 @@ async function adminPanel() {
 async function reveal() {
 
 	if(window.ethereum) {
+
 		await window.location.reload(false);
 
 		await connectwallet();
