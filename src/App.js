@@ -7,6 +7,67 @@ import Web3 from 'web3';
 const abi = [
 	{
 		"inputs": [],
+		"name": "add_item",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "advanceState",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_itemId",
+				"type": "uint256"
+			}
+		],
+		"name": "bid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "destroy",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "reset",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "revealWinners",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "new_owner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"stateMutability": "payable",
 		"type": "constructor"
 	},
@@ -37,47 +98,7 @@ const abi = [
 	},
 	{
 		"inputs": [],
-		"name": "Owner",
-		"outputs": [
-			{
-				"internalType": "address payable",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "add_item",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "advanceState",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_itemId",
-				"type": "uint256"
-			}
-		],
-		"name": "bid",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "destroy",
+		"name": "withdraw",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -121,16 +142,15 @@ const abi = [
 	},
 	{
 		"inputs": [],
-		"name": "reset",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "revealWinners",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "Owner",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -149,14 +169,20 @@ const abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "item_id",
+				"type": "uint256"
+			}
+		],
+		"name": "totalWinners",
+		"outputs": [
+			{
 				"internalType": "address",
-				"name": "new_owner",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -177,17 +203,10 @@ const abi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ];
 
-const address = "0x467C31639B61188c903131F48137e45c919d7ff0";
+const address = "0xACDaB0623Ea6435Cc059bC0FA46578cb40699cCc";
 
 var account = null;
 
@@ -209,6 +228,8 @@ async function connectwallet() {
       contract = new web3.eth.Contract(abi, address);
 	  owner = await contract.methods.getOwner().call();
       document.getElementById('wallet-owner-address').textContent = owner;
+
+	  await adminPanel();
     }
     
   }
@@ -311,7 +332,26 @@ async function destroy() {
 async function amiWinner() {
 
 	if(window.ethereum) {
-		
+		var output = "You have won Items: ";
+		var winnAddress;
+
+		for(var i=0; i<3; i++) {
+
+			winnAddress = await contract.methods.totalWinners(i).call();
+
+			if (winnAddress === account) {
+				output = output + String(i+1 + " ");
+			}
+
+		}
+
+		if(output == "You have won Items: ") {
+			output = output + "0";
+		}
+
+		document.getElementById('items_won').textContent = output;
+
+
 	}
 }
 
@@ -330,6 +370,27 @@ async function transferOwner() {
 		else{
 			console.log("you are not the contract owner");
 		}
+	}
+}
+
+async function adminPanel() {
+
+	if(window.ethereum) {
+
+		if( await isOwner()) {
+
+			document.getElementById('adminPanel').hidden = false;
+
+		}
+	}
+}
+
+async function reveal() {
+
+	if(window.ethereum) {
+		await window.location.reload(false);
+
+		await connectwallet();
 	}
 }
 
@@ -363,15 +424,15 @@ function App() {
         <div className='row' style={{marginTop:"40px"}}>
           <h2 style={{marginBottom:"40px"}}>Available items to bid in currect lottery</h2>
           <div class='gradient col-sm-4' style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
-            <h2 style={{color:'#FFFFFF'}}>Car</h2>
+            <h2 style={{color:'#FFFFFF'}}>1 : Car</h2>
             <Button onClick={ () => bid(0)}>Bid</Button>
           </div>
           <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}} >
-            <h2 style={{color:'#FFFFFF'}}>Phone</h2>
+            <h2 style={{color:'#FFFFFF'}}>2 : Phone</h2>
             <Button onClick={ () => bid(1)}>Bid</Button>
           </div>
           <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
-            <h2 style={{color:'#FFFFFF'}}>Helicopter</h2>
+            <h2 style={{color:'#FFFFFF'}}>3 : Helicopter</h2>
             <Button onClick={ () => bid(2)}>Bid</Button>
           </div>
         </div>
@@ -380,16 +441,21 @@ function App() {
           <h2 style={{marginBottom:"40px"}}>Available items to bid in currect lottery</h2>
           <div class='gradient col-sm-4' style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
             
-            <Button onClick={ () => bid(0)}>Reveal</Button>
+            <Button onClick={ () => reveal()}>Reveal</Button>
           </div>
           <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}} >
             
-            <Button onClick={ () => bid(1)}>Am I Winner</Button>
+            <Button onClick={ () => amiWinner()}>Am I Winner</Button>
+			<div class='card' id='items_won' style={{boxShadow:"1px 1px 10px #000000"}}>
+              <label for='floatingInput'>Items you have won</label>
+
+            </div>
+            <div class='card' id='items_won'></div>
           </div>
           
         </div>
 
-		<div className='row' style={{marginTop:"40px"}}>
+		<div hidden id="adminPanel" className='row' style={{marginTop:"40px"}}>
           <h2 style={{marginBottom:"40px"}}>Admin Panel</h2>
           
           <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
