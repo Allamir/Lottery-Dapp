@@ -441,20 +441,24 @@ async function destroy() {
 	}
 }
 
-// 
+// function to determine if current connected user has won any item
 async function amiWinner() {
 
 	if(window.ethereum) {
 
+		// validates that we are in the done phase and bidding phase has been concluded
 		if (stage == 1){
 
 			var output = "You have won Items: ";
 			var winnAddress;
 
+			// checks for each item seperatly
 			for(var i=0; i<3; i++) {
 
+				//calls winning address of given item
 				winnAddress = await contract.methods.totalWinners(i).call();
 
+				// compares if the winning address is the same with current user's address
 				if (winnAddress === account) {
 					output = output + String(i+1 + " ");
 				}
@@ -465,6 +469,7 @@ async function amiWinner() {
 				output = output + "0";
 			}
 
+			// updates the html front-end with each findings
 			document.getElementById('items_won').textContent = output;
 		}
 		else {
@@ -476,12 +481,15 @@ async function amiWinner() {
 	}
 }
 
+// function to transfer dapp/smartcontract ownership
 async function transferOwner() {
 
 	if(window.ethereum) {
 
+		// can only be called be owner
 		if( await isOwner()){
 
+			// takes the new address given on the html form
 			var newOwner = document.getElementById('newOwner').value;
 
 			await contract.methods.transferOwnership(newOwner).send({from:account});
