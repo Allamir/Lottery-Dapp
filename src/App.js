@@ -296,7 +296,8 @@ async function connectwallet() {
 	  await totalBiddings(0);
 	  await totalBiddings(1);
 	  await totalBiddings(2);
-	  
+
+	  // calculates total ethers earned in the currect lottery cycle
 	  await totalEther();
 
     }
@@ -309,12 +310,17 @@ async function connectwallet() {
   }
 }
 
+// function to let a user bid on a item, takes the parameter of the item id to do that
 async function bid(item_id) {
 
   if (window.ethereum) {
 
+	// Making sure that the lottery is on bidding and not done stage
 	if(stage == 0){
 
+		// checks if the current user is also the owner, if it is it restricts him from bidding.
+		// There are also controls that forbidd him to bid on blockchain side but i wanted to make sure that
+		// he would be restricted on front-end side as well.
 		if(await isOwner()){
 			
 			
@@ -334,6 +340,7 @@ async function bid(item_id) {
 	}
 }
 
+// function to check if current user is Owner and return a true or false
 async function isOwner() {
 
 	
@@ -352,10 +359,12 @@ async function isOwner() {
 	
 }
 
+// function to send all smart contract balance to owner's wallet
 async function withdraw() {
 
 	if(window.ethereum) {
 
+		// can only be called by owner
 		if( await isOwner()){
 
 			await contract.methods.withdraw().send({from:account});
@@ -367,10 +376,12 @@ async function withdraw() {
 	}
 }
 
+// function to declare winner and checge stage from bidding to done
 async function declareWinner() {
 
 	if(window.ethereum) {
 		
+		// can only be called by owner
 		if( await isOwner()){
 
 			await contract.methods.revealWinners().send({from:account});
@@ -382,10 +393,12 @@ async function declareWinner() {
 	}
 }
 
+// function to reset lottery
 async function reset() {
 
 	if(window.ethereum) {		
 
+		// can only be called by owner
 		if( await isOwner()){
 
 			await contract.methods.reset().send({from:account});
@@ -397,6 +410,7 @@ async function reset() {
 	}
 }
 
+// function to calculated total bidding on the given item and display its findings on the webapp
 async function totalBiddings(itemID) {
 
 	if(window.ethereum) {
@@ -410,10 +424,12 @@ async function totalBiddings(itemID) {
 	}
 }
 
+// function to destroy smart contract, before being destroyed smart contract will transfer all its balance to owner's wallet
 async function destroy() {
 
 	if(window.ethereum) {
 
+		// can only be executed by admin
 		if( await isOwner()){
 
 			await contract.methods.destroy().send({from:account});
@@ -425,6 +441,7 @@ async function destroy() {
 	}
 }
 
+// 
 async function amiWinner() {
 
 	if(window.ethereum) {
