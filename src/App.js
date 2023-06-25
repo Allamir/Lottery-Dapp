@@ -7,67 +7,6 @@ import Web3 from 'web3';
 const abi = [
 	{
 		"inputs": [],
-		"name": "add_item",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "advanceState",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_itemId",
-				"type": "uint256"
-			}
-		],
-		"name": "bid",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "destroy",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "reset",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "revealWinners",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "new_owner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"stateMutability": "payable",
 		"type": "constructor"
 	},
@@ -98,7 +37,47 @@ const abi = [
 	},
 	{
 		"inputs": [],
-		"name": "withdraw",
+		"name": "Owner",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "add_item",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "advanceState",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_itemId",
+				"type": "uint256"
+			}
+		],
+		"name": "bid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "destroy",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -136,6 +115,19 @@ const abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getStage",
+		"outputs": [
+			{
+				"internalType": "enum lottery.Stage",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -166,15 +158,16 @@ const abi = [
 	},
 	{
 		"inputs": [],
-		"name": "Owner",
-		"outputs": [
-			{
-				"internalType": "address payable",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
+		"name": "reset",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "revealWinners",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -225,6 +218,19 @@ const abi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "new_owner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
@@ -240,10 +246,17 @@ const abi = [
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ];
 
-const address = "0x4ececD48BE9968bCD2c3c8C4676528274e5fa1df";
+const address = "0x467737bB11d25C61aC0ED1A0e78eA28e12EF8D09";
 
 var account = null;
 
@@ -252,6 +265,8 @@ var contract = null;
 var item_id = null;
 
 var owner = null;
+
+var stage = null;
 
 
 async function connectwallet() {
@@ -266,6 +281,8 @@ async function connectwallet() {
 	  owner = await contract.methods.getOwner().call();
       document.getElementById('wallet-owner-address').textContent = owner;
 
+	  stage = await contract.methods.getStage().call();
+	  
 
 	  await adminPanel();
 
@@ -273,6 +290,7 @@ async function connectwallet() {
 	  await totalBiddings(1);
 	  await totalBiddings(2);
 	  await totalEther();
+
     }
     
   }
@@ -286,12 +304,26 @@ async function connectwallet() {
 async function bid(item_id) {
 
   if (window.ethereum) {
-		var web3 = new Web3(window.ethereum);
-		
-        await contract.methods.bid(item_id).send( {from:account,value : 10000000000000000});
-    
-  }
 
+	if(stage == 0){
+
+		if(await isOwner()){
+			
+			
+			console.log("Owner cannot make a bidding");
+		}
+		else {
+			
+			await contract.methods.bid(item_id).send( {from:account,value : 10000000000000000});
+		}
+ 	}
+	else{
+		console.log("Bidding stage has stopped");
+	}
+
+	 
+
+	}
 }
 
 async function isOwner() {
@@ -388,24 +420,32 @@ async function destroy() {
 async function amiWinner() {
 
 	if(window.ethereum) {
-		var output = "You have won Items: ";
-		var winnAddress;
 
-		for(var i=0; i<3; i++) {
+		if (stage == 1){
 
-			winnAddress = await contract.methods.totalWinners(i).call();
+			var output = "You have won Items: ";
+			var winnAddress;
 
-			if (winnAddress === account) {
-				output = output + String(i+1 + " ");
+			for(var i=0; i<3; i++) {
+
+				winnAddress = await contract.methods.totalWinners(i).call();
+
+				if (winnAddress === account) {
+					output = output + String(i+1 + " ");
+				}
+
 			}
 
-		}
+			if(output == "You have won Items: ") {
+				output = output + "0";
+			}
 
-		if(output == "You have won Items: ") {
-			output = output + "0";
+			document.getElementById('items_won').textContent = output;
 		}
-
-		document.getElementById('items_won').textContent = output;
+		else {
+			
+			document.getElementById('items_won').textContent = "Firstly Bidding phase has to stop.";
+		}
 
 
 	}
@@ -528,7 +568,7 @@ function App() {
         </div>
 
 		<div className='row' style={{marginTop:"40px"}}>
-          <h2 style={{marginBottom:"40px"}}>Available items to bid in currect lottery</h2>
+          <h2 style={{marginBottom:"40px"}}>Further Options</h2>
           {/* <div class='gradient col-sm-4' style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
             
             <Button onClick={ () => reveal()}>Reveal</Button>
@@ -541,18 +581,21 @@ function App() {
 
             </div>
             <div class='card' id='items_won'></div>
+			
           </div>
-          
-        </div>
 
-		<div className='row' style={{marginTop:"40px"}}>
-		<div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
+		  <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000", marginLeft:"20%"}}>
             <h2 style={{color:'#FFFFFF'}}>Total earnings in Ether</h2>
             
 			<h5 id="totalEther" style={{color:'#FFFFFF'}}></h5>
           </div>
           
         </div>
+
+		
+		
+          
+        
 
 		<div hidden id="adminPanel" className='row' style={{marginTop:"40px"}}>
           <h2 style={{marginBottom:"40px"}}>Admin Panel</h2>
