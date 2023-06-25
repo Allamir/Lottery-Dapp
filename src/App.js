@@ -502,6 +502,7 @@ async function transferOwner() {
 	}
 }
 
+// function to hide or show admin panel wether or not the user is the owner address as wll
 async function adminPanel() {
 
 	if(window.ethereum) {
@@ -514,17 +515,19 @@ async function adminPanel() {
 	}
 }
 
+// function to automatically refresh web page every 10 seconds
 async function reveal() {
 
 	if(window.ethereum) {
 
 		
-		setTimeout("location.reload(true);", 8000);
+		setTimeout("location.reload(true);", 10000);
 
 		
 	}
 }
 
+// function to calculate total amount of ether gathered on current cycle.
 async function totalEther() {
 
 	if(window.ethereum) {
