@@ -551,8 +551,7 @@ function App() {
           <form class='gradient col-lg-5 mt-5' style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
 
             <h4 style={{color:'#FFFFFF'}}>Lottery Dapp</h4>
-            {/* <h5 style={{color:'#FFFFFF'}}>Welcome</h5> */}
-            {/* <Button onClick={connectwallet} style={{marginBottom:"5px"}}>Connect Wallet</Button> */}
+            
 
 			<h5 style={{color:'#FFFFFF'}}>Your address</h5>
             <div class='card' id='wallet-address' style={{boxShadow:"1px 1px 10px #000000"}}>
@@ -620,7 +619,7 @@ function App() {
 			
           </div>
 
-		  <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000", marginLeft:"20%"}}>
+		  <div class='gradient col-sm-4'style={{borderRadius:"25px",boxShadow:"1px 1px 10px #000000"}}>
             <h2 style={{color:'#FFFFFF'}}>Total earnings in Ether</h2>
             
 			<h5 id="totalEther" style={{color:'#FFFFFF'}}></h5>
