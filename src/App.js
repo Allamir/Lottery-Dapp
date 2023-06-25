@@ -268,27 +268,35 @@ var owner = null;
 
 var stage = null;
 
-
+// Initialization function
 async function connectwallet() {
   try {
     if (window.ethereum) {
+
+	  // connects metamsk wallet to dapp
       var web3 = new Web3(window.ethereum);
       await window.ethereum.send('eth_requestAccounts');
       var accounts = await web3.eth.getAccounts();
       account = accounts[0];
+
+	  // sets user address in html website
       document.getElementById('wallet-address').textContent = account;
       contract = new web3.eth.Contract(abi, address);
+	  //sets dapp owner address in html website
 	  owner = await contract.methods.getOwner().call();
       document.getElementById('wallet-owner-address').textContent = owner;
-
+	  
+	  // initializes stage of lottery
 	  stage = await contract.methods.getStage().call();
 	  
-
+	  // determines wether the user is the admin thus hidding or unhidding admin panel
 	  await adminPanel();
-
+      
+	  // initializes total biddings from items 1,2,3
 	  await totalBiddings(0);
 	  await totalBiddings(1);
 	  await totalBiddings(2);
+	  
 	  await totalEther();
 
     }
